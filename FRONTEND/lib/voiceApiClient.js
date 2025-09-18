@@ -2,7 +2,7 @@
 // utils/voiceApiClient.js
 
 class VoiceApiClient {
-  constructor(baseUrl = 'https://ai-powered-public-speaking-game-backend.onrender.com') {
+  constructor(baseUrl = 'http://127.0.0.1:5005') {
     this.baseUrl = baseUrl;
   }
 

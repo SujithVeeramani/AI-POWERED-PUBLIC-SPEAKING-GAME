@@ -124,7 +124,7 @@ export default function Game1Page() {
 
   // Initialize API client
   useEffect(() => {
-    apiClientRef.current = new VoiceApiClient('https://ai-powered-public-speaking-game-backend.onrender.com')
+    apiClientRef.current = new VoiceApiClient('http://127.0.0.1:5005')
   }, [])
 
   const initializeGame = useCallback(() => {
