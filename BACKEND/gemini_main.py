@@ -18,7 +18,7 @@ import librosa
 import soundfile as sf
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://ai-powered-public-speaking-game-vel.vercel.app"}}, supports_credentials=True)
+CORS(app)
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -959,5 +959,5 @@ if __name__ == '__main__':
     print("\nNote: Make sure to set your GEMINI_API_KEY environment variable!")
     
     # ✅ Use Render's PORT if available, otherwise default to 5000
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5005))
     app.run(host="0.0.0.0", port=port, debug=False)

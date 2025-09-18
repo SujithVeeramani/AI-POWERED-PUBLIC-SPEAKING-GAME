@@ -105,7 +105,7 @@ export default function Game2Page() {
   const recordingStartTimeRef = useRef<number | null>(null)
 
   useEffect(() => {
-    apiClientRef.current = new VoiceApiClient('http://127.0.0.1:5005')
+    apiClientRef.current = new VoiceApiClient('https://ai-powered-public-speaking-game-backend.onrender.com')
   }, [])
 
   const startVoiceRecording = useCallback(async () => {
