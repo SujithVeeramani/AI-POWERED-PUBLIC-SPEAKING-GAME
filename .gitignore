@@ -3,3 +3,4 @@ FRONTEND/node_modules
 FRONTEND/next-env.d.ts
 
 BACKEND/__pycache__
+BACKEND/.env

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mic, Timer, Zap, BarChart3 } from "lucide-react"
+import { Mic, Timer, Zap, BarChart3, Linkedin, Twitter } from "lucide-react"
 
 export default function HomePage() {
   const games = [
@@ -113,7 +113,28 @@ export default function HomePage() {
       <footer className="border-t bg-white/80 backdrop-blur-sm mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center text-gray-600">
-            <p>AI-Powered Public Speaking Trainer - Improve your communication skills through practice</p>
+            <p className="mb-4">AI-Powered Public Speaking Trainer - Improve your communication skills through practice</p>
+            <div className="flex items-center justify-center space-x-4">
+              <span className="text-sm">Made with ❤️ by <span className="font-semibold text-gray-800">Sujith</span></span>
+              <div className="flex items-center space-x-3">
+                <a 
+                  href="https://www.linkedin.com/in/sujithvl/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-[#4F46E5] transition-colors duration-200"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://x.com/whySujith" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-[#4F46E5] transition-colors duration-200"
+                >
+                  <Twitter className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
