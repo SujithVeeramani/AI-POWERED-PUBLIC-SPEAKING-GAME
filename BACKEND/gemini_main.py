@@ -18,7 +18,7 @@ import librosa
 import soundfile as sf
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:3000'])
+CORS(app, origins=['https://ai-powered-public-speaking-game-vel.vercel.app/'])
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -958,4 +958,4 @@ if __name__ == '__main__':
     print("  - conductor: Energy-based analysis for Game 2")
     print("\nNote: Make sure to set your GEMINI_API_KEY environment variable!")
     
-    app.run(debug=True, host='0.0.0.0', port=5005)
+    app.run(debug=True, host='0.0.0.0', port=5000)
