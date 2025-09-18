@@ -119,7 +119,7 @@ export function ConnectionTest() {
         </Button>
 
         <div className="text-xs text-gray-500 text-center">
-          Backend: {process.env.NEXT_PUBLIC_API_URL || 'https://ai-powered-public-speaking-game-backend.onrender.com'}
+          Backend: {process.env.NEXT_PUBLIC_API_URL || 'https://backend-ai-speak.onrender.com'}
         </div>
       </CardContent>
     </Card>

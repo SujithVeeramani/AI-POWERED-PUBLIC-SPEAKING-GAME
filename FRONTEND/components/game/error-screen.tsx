@@ -42,7 +42,7 @@ export function ErrorScreen({
               <h4 className="font-semibold text-blue-800 mb-2">Possible solutions:</h4>
               <ul className="text-sm text-blue-700 space-y-1 list-disc list-inside">
                 <li>Check your internet connection</li>
-                <li>Make sure the backend server is running ('https://ai-powered-public-speaking-game-backend.onrender.com')</li>
+                <li>Make sure the backend server is running ('https://backend-ai-speak.onrender.com')</li>
                 <li>Ensure Ollama is running with Mistral model</li>
                 <li>Try refreshing the page</li>
               </ul>
