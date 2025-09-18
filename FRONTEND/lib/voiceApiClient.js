@@ -24,20 +24,52 @@ class VoiceApiClient {
     });
   }
 
-  // Upload voice recording
- async uploadVoiceRecording({
-  sessionId,
-  prompt,
-  promptIndex,
-  audioBlob,
-  responseTime,
-  gameSettings = {},
-  // Additional parameters for Triple Step game
-  wordToIntegrate,
-  wordTimestamp,
-  audioDuration,
-}) {
+  // ✅ Enhanced fetch with proper CORS headers
+  async makeRequest(endpoint, options = {}) {
+    const defaultOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        // ✅ Add origin header for CORS
+        'Origin': window.location.origin,
+        ...options.headers
+      },
+      // ✅ Include credentials for CORS
+      credentials: 'include',
+      ...options
+    };
 
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, defaultOptions);
+      
+      // ✅ Better error handling for CORS issues
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      // ✅ Enhanced error messages for CORS debugging
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        throw new Error('Network error: Please check if the backend server is running and CORS is configured correctly');
+      }
+      throw error;
+    }
+  }
+
+  // Upload voice recording - Updated with enhanced error handling
+  async uploadVoiceRecording({
+    sessionId,
+    prompt,
+    promptIndex,
+    audioBlob,
+    responseTime,
+    gameSettings = {},
+    wordToIntegrate,
+    wordTimestamp,
+    audioDuration,
+  }) {
     try {
       // Convert blob to base64
       const base64Audio = await this.blobToBase64(audioBlob);
@@ -57,31 +89,21 @@ class VoiceApiClient {
       };
 
       // Add Triple Step specific data if provided
-      if (wordToIntegrate !== null) {
+      if (wordToIntegrate !== null && wordToIntegrate !== undefined) {
         payload.word_to_integrate = wordToIntegrate;
       }
-      if (wordTimestamp !== null) {
+      if (wordTimestamp !== null && wordTimestamp !== undefined) {
         payload.word_timestamp = wordTimestamp;
       }
-      if (audioDuration !== null) {
+      if (audioDuration !== null && audioDuration !== undefined) {
         payload.audio_duration = audioDuration;
       }
 
-      const response = await fetch(`${this.baseUrl}/api/voice/upload`, {
+      return await this.makeRequest('/api/voice/upload', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(payload)
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Upload failed');
-      }
-
-      return result;
     } catch (error) {
       console.error('Voice upload error:', error);
       throw error;
@@ -105,21 +127,10 @@ class VoiceApiClient {
   // Complete a game session
   async completeSession(sessionId, gameResults) {
     try {
-      const response = await fetch(`${this.baseUrl}/api/session/${sessionId}/complete`, {
+      return await this.makeRequest(`/api/session/${sessionId}/complete`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(gameResults)
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Session completion failed');
-      }
-
-      return result;
     } catch (error) {
       console.error('Session completion error:', error);
       throw error;
@@ -129,14 +140,7 @@ class VoiceApiClient {
   // Get session data
   async getSession(sessionId) {
     try {
-      const response = await fetch(`${this.baseUrl}/api/session/${sessionId}`);
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to get session');
-      }
-
-      return result;
+      return await this.makeRequest(`/api/session/${sessionId}`);
     } catch (error) {
       console.error('Get session error:', error);
       throw error;
@@ -146,26 +150,17 @@ class VoiceApiClient {
   // List all sessions
   async listSessions() {
     try {
-      const response = await fetch(`${this.baseUrl}/api/sessions`);
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to list sessions');
-      }
-
-      return result;
+      return await this.makeRequest('/api/sessions');
     } catch (error) {
       console.error('List sessions error:', error);
       throw error;
     }
   }
 
-  // Health check
+  // Health check - Updated for better CORS testing
   async healthCheck() {
     try {
-      const response = await fetch(`${this.baseUrl}/health`);
-      const result = await response.json();
-      return result;
+      return await this.makeRequest('/health');
     } catch (error) {
       console.error('Health check error:', error);
       throw error;
@@ -173,7 +168,20 @@ class VoiceApiClient {
   }
 }
 
-// React Hook for Voice Recording
+// ✅ Add connection test utility
+export const testBackendConnection = async () => {
+  const client = new VoiceApiClient();
+  try {
+    const health = await client.healthCheck();
+    console.log('Backend connection successful:', health);
+    return { success: true, data: health };
+  } catch (error) {
+    console.error('Backend connection failed:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// React Hook for Voice Recording - Enhanced
 export const useVoiceRecorder = (apiClient) => {
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -181,8 +189,19 @@ export const useVoiceRecorder = (apiClient) => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      // ✅ More specific audio constraints for better compatibility
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 16000
+        } 
+      });
+      
+      const recorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
       
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -204,7 +223,7 @@ export const useVoiceRecorder = (apiClient) => {
     return new Promise((resolve) => {
       if (mediaRecorder && isRecording) {
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm;codecs=opus' });
           resolve(audioBlob);
           setIsRecording(false);
           setMediaRecorder(null);
@@ -256,7 +275,6 @@ export const uploadVoiceForTripleStep = async ({
     return result;
   } catch (error) {
     console.error('Failed to upload Triple Step voice:', error);
-    // You might want to queue for retry or show user feedback
     throw error;
   }
 };
@@ -285,7 +303,6 @@ export const uploadVoiceForPrompt = async ({
     return result;
   } catch (error) {
     console.error('Failed to upload voice:', error);
-    // You might want to queue for retry or show user feedback
     throw error;
   }
 };

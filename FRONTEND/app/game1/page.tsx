@@ -16,6 +16,7 @@ import VoiceApiClient from "@/lib/voiceApiClient"
 import { EnhancedResults } from "@/components/game/enhanced-results"
 import { ProcessingScreen } from "@/components/game/processing-screen"
 import { ErrorScreen } from "@/components/game/error-screen"
+   import { ConnectionTest } from '@/components/component-test';
 
 type GamePhase = "setup" | "playing" | "processing" | "results" | "error"
 
@@ -403,6 +404,7 @@ export default function Game1Page() {
     return (
       <GameLayout title="Rapid Fire Analogies">
         <div className="max-w-2xl mx-auto">
+          <ConnectionTest />
           <Card>
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 p-3 rounded-full bg-orange-100">

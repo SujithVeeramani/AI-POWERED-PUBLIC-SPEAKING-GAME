@@ -15,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { BarChart3, RotateCcw, ArrowRight, Wind, Star, Zap, Target, TrendingUp } from "lucide-react"
 import VoiceApiClient from "@/lib/voiceApiClient"
+import { ConnectionTest } from '@/components/component-test';
 
 type GamePhase = "setup" | "playing" | "processing" | "results" | "error"
 
@@ -415,6 +416,7 @@ export default function Game2Page() {
     return (
       <GameLayout title="The Conductor">
         <div className="max-w-2xl mx-auto">
+          <ConnectionTest />
           <Card>
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 p-3 rounded-full bg-blue-100">
