@@ -18,28 +18,7 @@ import librosa
 import soundfile as sf
 
 app = Flask(__name__)
-CORS(app, 
-     origins=[
-         "https://ai-powered-public-speaking-game.vercel.app",
-         "https://*.vercel.app",  # Allow all Vercel preview deployments
-         "http://localhost:3000",  # Local development
-         "http://localhost:3001",  # Alternative local port
-         "http://127.0.0.1:3000"   # Alternative localhost
-     ],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     allow_headers=[
-         "Content-Type", 
-         "Authorization", 
-         "X-Requested-With",
-         "Accept",
-         "Origin",
-         "User-Agent",
-         "Cache-Control"
-     ],
-     supports_credentials=True,
-     max_age=86400  # Cache preflight requests for 24 hours
-)
-
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
